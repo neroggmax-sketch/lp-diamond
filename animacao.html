@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animação Técnica - Esquadria</title>
+
+    <style>
+        :root {
+            --blueprint-blue: #1c3d5a;
+            --blueprint-light: #3498db;
+            --glass-fill: rgba(52, 152, 219, 0.15);
+            --paper-bg: rgba(255, 255, 255, 0.85);
+            --line-width: 2px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            /* Fonte com aspecto técnico */
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container principal que segura a imagem de fundo e o SVG */
+        .workspace {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 1600px;
+            /* Limite para não esticar demais em monitores ultrawide */
+            background-image: url('image_0e92dd.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8) inset;
+        }
+
+        /* Esta é a folha onde a esquadria será desenhada, posicionada sobre o quadro da imagem */
+        .drawing-paper {
+            position: absolute;
+            top: 18%;
+            /* Ajustado para alinhar com o quadro superior da imagem */
+            left: 33%;
+            /* Centralizado no quadro principal */
+            width: 35%;
+            height: 45%;
+            background: var(--paper-bg);
+            box-shadow:
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                inset 0 0 40px rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+            /* Leve ajuste de perspectiva para casar com a foto */
+            transform: perspective(1000px) rotateX(2deg) rotateY(-1deg);
+            backdrop-filter: blur(3px);
+            /* Desfoca os desenhos originais que ficarem por baixo */
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Linhas de grade do papel */
+        .drawing-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(28, 61, 90, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(28, 61, 90, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Classe para linhas que serão desenhadas */
+        .path-line {
+            fill: none;
+            stroke: var(--blueprint-blue);
+            stroke-width: var(--line-width);
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            /* Configuração inicial para a linha invisível (pronta para ser desenhada) */
+            stroke-dasharray: 3000;
+            stroke-dashoffset: 3000;
+        }
+
+        /* Animação de desenho (alterada via JS adicionando essa classe) */
+        .animate-draw {
+            animation: drawLine 3s ease-in-out forwards;
+        }
+
+        .animate-draw-slow {
+            animation: drawLine 4.5s ease-in-out forwards;
+        }
+
+        /* Elementos que surgem gradativamente (Vidro e Textos) */
+        .fade-element {
+            opacity: 0;
+        }
+
+        .animate-fade {
+            animation: fadeIn 2s ease-in forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Estilos específicos */
+        .glass-panel {
+            fill: var(--glass-fill);
+            stroke: none;
+        }
+
+        .reflection {
+            stroke: rgba(255, 255, 255, 0.8);
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .dimension-line {
+            stroke: #e74c3c;
+            stroke-width: 1;
+            stroke-dasharray: 4, 4;
+        }
+
+        .text-tech {
+            fill: var(--blueprint-blue);
+            font-size: 14px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .text-dim {
+            fill: #e74c3c;
+            font-size: 12px;
+        }
+
+        /* Painel de Controle UI */
+        .ui-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            border-radius: 30px;
+            border: 1px solid #333;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .btn {
+            background: #f1c40f;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #f39c12;
+            transform: scale(1.05);
+        }
+
+        .status-text {
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        /* Fitas/Adesivos prendendo o papel na prancheta */
+        .tape {
+            position: absolute;
+            width: 40px;
+            height: 15px;
+            background: rgba(255, 255, 220, 0.6);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .tape.top-left {
+            top: -5px;
+            left: -10px;
+            transform: rotate(-45deg);
+        }
+
+        .tape.top-right {
+            top: -5px;
+            right: -10px;
+            transform: rotate(45deg);
+        }
+
+        .tape.bottom-left {
+            bottom: -5px;
+            left: -10px;
+            transform: rotate(45deg);
+        }
+
+        .tape.bottom-right {
+            bottom: -5px;
+            right: -10px;
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="workspace">
+
+        <!-- Folha de papel vegetal sobre a prancheta -->
+        <div class="drawing-paper">
+            <div class="tape top-left"></div>
+            <div class="tape top-right"></div>
+            <div class="tape bottom-left"></div>
+            <div class="tape bottom-right"></div>
+
+            <svg id="blueprintSvg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+
+                <!-- Título do Projeto -->
+                <g class="fade-element step-5">
+                    <text x="40" y="50" class="text-tech" style="font-size: 18px;">PROJETO: ESQUADRIA DE CORRER 4
+                        FOLHAS</text>
+                    <text x="40" y="70" class="text-tech" style="font-size: 12px;">ESCALA: 1:20 | MATERIAL: ALUMÍNIO
+                        PRETO</text>
+                    <line x1="40" y1="80" x2="400" y2="80" class="path-line animate-draw step-5" stroke-width="1" />
+                </g>
+
+                <!-- ==================== MARCO DA ESQUADRIA ==================== -->
+                <g id="marco">
+                    <!-- Linha externa -->
+                    <rect x="100" y="150" width="600" height="350" rx="2" class="path-line step-1" />
+                    <!-- Linha interna (espessura do perfil) -->
+                    <rect x="120" y="170" width="560" height="310" rx="1" class="path-line step-1" />
+
+                    <!-- Trilhos horizontais (inferior e superior) -->
+                    <line x1="120" y1="185" x2="680" y2="185" class="path-line step-2" stroke-width="1" />
+                    <line x1="120" y1="465" x2="680" y2="465" class="path-line step-2" stroke-width="1" />
+                </g>
+
+                <!-- ==================== FOLHAS DE VIDRO ==================== -->
+                <!-- As 4 folhas dividem o espaço de 560px. Aprox 140px cada, com sobreposição -->
+
+                <!-- Folha 1 (Fixa Esquerda) -->
+                <g class="folha" transform="translate(120, 170)">
+                    <rect x="0" y="0" width="145" height="310" class="path-line step-3" />
+                    <!-- Vidro e reflexos -->
+                    <g class="fade-element step-4">
+                        <rect x="15" y="15" width="115" height="280" class="glass-panel" />
+                        <line x1="30" y1="50" x2="100" y2="250" class="reflection" />
+                        <line x1="50" y1="50" x2="115" y2="235" class="reflection" stroke-width="2" opacity="0.5" />
+                    </g>
+                </g>
+
+                <!-- Folha 2 (Móvel Central Esquerda) -->
+                <g class="folha" transform="translate(255, 170)">
+                    <!-- Trilho frontal -->
+                    <rect x="0" y="5" width="150" height="300" class="path-line step-3" />
+                    <!-- Puxador -->
+                    <rect x="130" y="130" width="8" height="50" rx="3" class="path-line step-3" stroke-width="1" />
+                    <!-- Vidro -->
+                    <g class="fade-element step-4">
+                        <rect x="15" y="20" width="120" height="270" class="glass-panel" />
+                        <line x1="40" y1="50" x2="110" y2="250" class="reflection" />
+                    </g>
+                </g>
+
+                <!-- Folha 3 (Móvel Central Direita) -->
+                <g class="folha" transform="translate(395, 170)">
+                    <rect x="0" y="5" width="150" height="300" class="path-line step-3" />
+                    <!-- Puxador -->
+                    <rect x="12" y="130" width="8" height="50" rx="3" class="path-line step-3" stroke-width="1" />
+                    <!-- Vidro -->
+                    <g class="fade-element step-4">
+                        <rect x="15" y="20" width="120" height="270" class="glass-panel" />
+                        <line x1="30" y1="50" x2="100" y2="250" class="reflection" />
+                    </g>
+                </g>
+
+                <!-- Folha 4 (Fixa Direita) -->
+                <g class="folha" transform="translate(535, 170)">
+                    <rect x="0" y="0" width="145" height="310" class="path-line step-3" />
+                    <!-- Vidro -->
+                    <g class="fade-element step-4">
+                        <rect x="15" y="15" width="115" height="280" class="glass-panel" />
+                        <line x1="30" y1="50" x2="100" y2="250" class="reflection" />
+                        <line x1="50" y1="50" x2="115" y2="235" class="reflection" stroke-width="2" opacity="0.5" />
+                    </g>
+                </g>
+
+                <!-- ==================== COTAS ==================== -->
+                <g class="fade-element step-5">
+                    <!-- Cota Largura Superior -->
+                    <line x1="100" y1="120" x2="700" y2="120" class="dimension-line" />
+                    <line x1="100" y1="110" x2="100" y2="130" class="dimension-line" />
+                    <line x1="700" y1="110" x2="700" y2="130" class="dimension-line" />
+                    <text x="400" y="112" class="text-dim" text-anchor="middle">L = 2400 mm</text>
+
+                    <!-- Cota Altura Lateral -->
+                    <line x1="70" y1="150" x2="70" y2="500" class="dimension-line" />
+                    <line x1="60" y1="150" x2="80" y2="150" class="dimension-line" />
+                    <line x1="60" y1="500" x2="80" y2="500" class="dimension-line" />
+                    <text x="55" y="325" class="text-dim" text-anchor="middle" transform="rotate(-90, 55, 325)">H = 1200
+                        mm</text>
+
+                    <!-- Chamada de detalhe do vidro -->
+                    <path d="M 600 250 L 730 200 L 770 200" class="dimension-line" fill="none" />
+                    <circle cx="600" cy="250" r="3" fill="#e74c3c" />
+                    <text x="730" y="195" class="text-dim">Vidro Temperado 8mm</text>
+                    <text x="730" y="210" class="text-dim">Incolor</text>
+                </g>
+
+            </svg>
+        </div>
+
+        <!-- Painel Interativo -->
+        <div class="ui-panel">
+            <button class="btn" onclick="iniciarAnimacao()">Desenhar</button>
+            <div class="status-text" id="statusBox">Aguardando comando...</div>
+        </div>
+    </div>
+
+    <script>
+        function resetAnimateClasses() {
+            // Remove as classes de animação para poder reiniciar
+            const lines = document.querySelectorAll('.path-line');
+            const fades = document.querySelectorAll('.fade-element');
+
+            lines.forEach(el => {
+                el.classList.remove('animate-draw');
+                el.classList.remove('animate-draw-slow');
+                // Força o reflow do DOM para garantir que a classe seja reaplicada corretamente
+                void el.offsetWidth;
+            });
+
+            fades.forEach(el => {
+                el.classList.remove('animate-fade');
+                void el.offsetWidth;
+            });
+        }
+
+        function iniciarAnimacao() {
+            resetAnimateClasses();
+            const status = document.getElementById('statusBox');
+
+            // --- ETAPA 1: Marco Externo ---
+            status.innerHTML = "Desenhando marco e batentes...";
+            document.querySelectorAll('.step-1').forEach(el => el.classList.add('animate-draw'));
+
+            // --- ETAPA 2: Trilhos (Delay 1.5s) ---
+            setTimeout(() => {
+                status.innerHTML = "Traçando trilhos horizontais...";
+                document.querySelectorAll('.step-2').forEach(el => el.classList.add('animate-draw'));
+            }, 1500);
+
+            // --- ETAPA 3: Folhas da Janela (Delay 3s) ---
+            setTimeout(() => {
+                status.innerHTML = "Esboçando perfis das 4 folhas...";
+                document.querySelectorAll('.step-3').forEach(el => el.classList.add('animate-draw-slow'));
+            }, 3000);
+
+            // --- ETAPA 4: Vidraçaria (Delay 5.5s) ---
+            setTimeout(() => {
+                status.innerHTML = "Aplicando hachura de vidraçaria e reflexos...";
+                document.querySelectorAll('.step-4').forEach(el => el.classList.add('animate-fade'));
+            }, 5500);
+
+            // --- ETAPA 5: Detalhamento Técnico (Delay 7.5s) ---
+            setTimeout(() => {
+                status.innerHTML = "Finalizando cotas e anotações técnicas.";
+                document.querySelectorAll('.step-5').forEach(el => {
+                    if (el.tagName === 'g') {
+                        el.classList.add('animate-fade');
+                    }
+                    // Linhas dentro do G final
+                    const innerLines = el.querySelectorAll('.path-line');
+                    innerLines.forEach(l => l.classList.add('animate-draw'));
+                });
+            }, 7500);
+        }
+
+        // Inicia automaticamente após 1 segundo que a página carregar
+        window.onload = function () {
+            setTimeout(iniciarAnimacao, 1000);
+        };
+    </script>
+</body>
+
+</html>
