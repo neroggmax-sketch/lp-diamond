@@ -195,8 +195,9 @@
     </section>
 
     <!-- Portfólio / Galeria -->
-    <section id="portfolio" class="section">
-        <div class="container">
+    <section id="portfolio" class="section portfolio-section">
+        <canvas id="portfolio-bg-canvas"></canvas>
+        <div class="container portfolio-container">
             <div class="section-header">
                 <h2>Nossos Trabalhos</h2>
                 <p>Confira alguns de nossos projetos recentes</p>
@@ -264,6 +265,90 @@
                 </a>
             </div>
         </div>
+    </section>
+
+    <!-- Marcas -->
+    <section id="marcas" class="section">
+        <div class="container">
+            <div class="section-header text-center" style="text-align: center;">
+                <h2>Marcas que Trabalhamos</h2>
+                <p>Parcerias de excelência para entregar sempre o melhor resultado.</p>
+            </div>
+        </div>
+        <div class="marcas-carousel-wrapper">
+            <div class="marcas-track">
+                <!-- Itens originais -->
+                <div class="marcas-item"><img src="img/marca0.png" alt="Marca 1"></div>
+                <div class="marcas-item"><img src="img/marca1.png" alt="Marca 2"></div>
+                <div class="marcas-item"><img src="img/marca2.png" alt="Marca 3"></div>
+                <div class="marcas-item"><img src="img/marca3.png" alt="Marca 4"></div>
+                <div class="marcas-item"><img src="img/marca4.png" alt="Marca 5"></div>
+                <div class="marcas-item"><img src="img/marca5.png" alt="Marca 6"></div>
+                <div class="marcas-item"><img src="img/marca6.png" alt="Marca 7"></div>
+                <!-- Duplicados para loop infinito -->
+                <div class="marcas-item"><img src="img/marca0.png" alt="Marca 1"></div>
+                <div class="marcas-item"><img src="img/marca1.png" alt="Marca 2"></div>
+                <div class="marcas-item"><img src="img/marca2.png" alt="Marca 3"></div>
+                <div class="marcas-item"><img src="img/marca3.png" alt="Marca 4"></div>
+                <div class="marcas-item"><img src="img/marca4.png" alt="Marca 5"></div>
+                <div class="marcas-item"><img src="img/marca5.png" alt="Marca 6"></div>
+                <div class="marcas-item"><img src="img/marca6.png" alt="Marca 7"></div>
+            </div>
+        </div>
+
+        <style>
+            .marcas-carousel-wrapper {
+                overflow: hidden;
+                width: 100%;
+                margin-top: 40px;
+                padding: 20px 0;
+                mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            }
+
+            .marcas-track {
+                display: flex;
+                align-items: center;
+                gap: 60px;
+                width: max-content;
+                animation: scroll-marcas 20s linear infinite;
+            }
+
+            .marcas-track:hover {
+                animation-play-state: paused;
+            }
+
+            .marcas-item {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .marcas-item img {
+                max-height: 80px;
+                max-width: 200px;
+                object-fit: contain;
+                border-radius: 8px;
+                transition: transform 0.3s ease, filter 0.3s ease;
+                filter: brightness(1);
+            }
+
+            .marcas-item img:hover {
+                transform: scale(1.1);
+                filter: brightness(1.2);
+            }
+
+            @keyframes scroll-marcas {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+        </style>
     </section>
 
     <!-- Sobre -->
@@ -385,90 +470,6 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Marcas -->
-    <section id="marcas" class="section">
-        <div class="container">
-            <div class="section-header text-center" style="text-align: center;">
-                <h2>Marcas que Trabalhamos</h2>
-                <p>Parcerias de excelência para entregar sempre o melhor resultado.</p>
-            </div>
-        </div>
-        <div class="marcas-carousel-wrapper">
-            <div class="marcas-track">
-                <!-- Itens originais -->
-                <div class="marcas-item"><img src="img/marca0.png" alt="Marca 1"></div>
-                <div class="marcas-item"><img src="img/marca1.png" alt="Marca 2"></div>
-                <div class="marcas-item"><img src="img/marca2.png" alt="Marca 3"></div>
-                <div class="marcas-item"><img src="img/marca3.png" alt="Marca 4"></div>
-                <div class="marcas-item"><img src="img/marca4.png" alt="Marca 5"></div>
-                <div class="marcas-item"><img src="img/marca5.png" alt="Marca 6"></div>
-                <div class="marcas-item"><img src="img/marca6.png" alt="Marca 7"></div>
-                <!-- Duplicados para loop infinito -->
-                <div class="marcas-item"><img src="img/marca0.png" alt="Marca 1"></div>
-                <div class="marcas-item"><img src="img/marca1.png" alt="Marca 2"></div>
-                <div class="marcas-item"><img src="img/marca2.png" alt="Marca 3"></div>
-                <div class="marcas-item"><img src="img/marca3.png" alt="Marca 4"></div>
-                <div class="marcas-item"><img src="img/marca4.png" alt="Marca 5"></div>
-                <div class="marcas-item"><img src="img/marca5.png" alt="Marca 6"></div>
-                <div class="marcas-item"><img src="img/marca6.png" alt="Marca 7"></div>
-            </div>
-        </div>
-
-        <style>
-            .marcas-carousel-wrapper {
-                overflow: hidden;
-                width: 100%;
-                margin-top: 40px;
-                padding: 20px 0;
-                mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-            }
-
-            .marcas-track {
-                display: flex;
-                align-items: center;
-                gap: 60px;
-                width: max-content;
-                animation: scroll-marcas 20s linear infinite;
-            }
-
-            .marcas-track:hover {
-                animation-play-state: paused;
-            }
-
-            .marcas-item {
-                flex-shrink: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .marcas-item img {
-                max-height: 80px;
-                max-width: 200px;
-                object-fit: contain;
-                border-radius: 8px;
-                transition: transform 0.3s ease, filter 0.3s ease;
-                filter: brightness(1);
-            }
-
-            .marcas-item img:hover {
-                transform: scale(1.1);
-                filter: brightness(1.2);
-            }
-
-            @keyframes scroll-marcas {
-                0% {
-                    transform: translateX(0);
-                }
-
-                100% {
-                    transform: translateX(-50%);
-                }
-            }
-        </style>
     </section>
 
     <!-- Serviços -->

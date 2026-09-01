@@ -268,3 +268,187 @@ window.iniciarHeroAnimacao = function() {
 window.addEventListener('load', () => {
     setTimeout(window.iniciarHeroAnimacao, 500); // 500ms delay para dar tempo do site carregar
 });
+
+// ==========================================
+// Portfolio Background Canvas Animation
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('portfolio-bg-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let frames = [];
+    let profiles = [];
+
+    const palette = {
+        baseDark: '#005c99',
+        baseMid: '#007acc',
+        baseLight: '#3399ff',
+        background: '#000000'
+    };
+
+    function hexToRgba(hex, alpha) {
+        let r = parseInt(hex.slice(1, 3), 16),
+            g = parseInt(hex.slice(3, 5), 16),
+            b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function resize() {
+        if (!canvas.parentElement) return;
+        width = canvas.width = canvas.parentElement.offsetWidth;
+        height = canvas.height = canvas.parentElement.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class ProfileLine {
+        constructor() {
+            this.isVertical = Math.random() > 0.5;
+            this.reset();
+        }
+
+        reset() {
+            if (this.isVertical) {
+                this.x = Math.random() * width;
+                this.y = 0;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = 0;
+            } else {
+                this.x = 0;
+                this.y = Math.random() * height;
+                this.vx = 0;
+                this.vy = (Math.random() - 0.5) * 0.5;
+            }
+            this.thickness = Math.random() * 1.5 + 0.5;
+            this.opacity = Math.random() * 0.4 + 0.1;
+            this.color = Math.random() > 0.5 ? palette.baseDark : palette.baseMid;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.isVertical && (this.x < -50 || this.x > width + 50)) this.reset();
+            if (!this.isVertical && (this.y < -50 || this.y > height + 50)) this.reset();
+        }
+
+        draw() {
+            ctx.beginPath();
+            if (this.isVertical) {
+                ctx.moveTo(this.x, 0);
+                ctx.lineTo(this.x, height);
+            } else {
+                ctx.moveTo(0, this.y);
+                ctx.lineTo(width, this.y);
+            }
+            ctx.strokeStyle = hexToRgba(this.color, this.opacity);
+            ctx.lineWidth = this.thickness;
+            ctx.setLineDash([]);
+            ctx.stroke();
+        }
+    }
+
+    class WindowFrame {
+        constructor() {
+            this.reset();
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+        }
+
+        reset() {
+            this.w = Math.random() * 200 + 100;
+            this.h = Math.random() * 300 + 150;
+            this.x = Math.random() > 0.5 ? -this.w : width + this.w;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 0.8 + 0.2);
+            this.vy = (Math.random() - 0.5) * 0.2;
+            this.perimeter = (this.w * 2) + (this.h * 2);
+            this.drawPhase = Math.random() * Math.PI * 2;
+            this.drawSpeed = Math.random() * 0.01 + 0.005;
+            this.hasMullionX = Math.random() > 0.3;
+            this.hasMullionY = Math.random() > 0.5;
+            this.mullionXPos = this.w * (Math.random() * 0.4 + 0.3);
+            this.mullionYPos = this.h * (Math.random() * 0.4 + 0.3);
+            this.glassColor = palette.baseDark;
+            this.frameColor = palette.baseLight;
+            this.mullionColor = palette.baseMid;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.drawPhase += this.drawSpeed;
+            if (
+                (this.vx > 0 && this.x > width + 100) ||
+                (this.vx < 0 && this.x < -this.w - 100) ||
+                this.y > height + 100 || this.y < -this.h - 100
+            ) {
+                this.reset();
+            }
+        }
+
+        draw() {
+            let progress = (Math.sin(this.drawPhase) + 1) / 2;
+            let currentDrawLength = this.perimeter * progress;
+            let glassAlpha = progress > 0.8 ? 0.15 : 0.05;
+            
+            ctx.fillStyle = hexToRgba(this.glassColor, glassAlpha);
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+
+            ctx.strokeStyle = hexToRgba(this.frameColor, 0.7);
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([this.perimeter]);
+            ctx.lineDashOffset = this.perimeter - currentDrawLength;
+            ctx.strokeRect(this.x, this.y, this.w, this.h);
+
+            ctx.setLineDash([]);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = hexToRgba(this.mullionColor, 0.5);
+            ctx.globalAlpha = progress;
+
+            if (this.hasMullionX) {
+                ctx.beginPath();
+                ctx.moveTo(this.x + this.mullionXPos, this.y);
+                ctx.lineTo(this.x + this.mullionXPos, this.y + this.h);
+                ctx.stroke();
+            }
+
+            if (this.hasMullionY) {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.mullionYPos);
+                ctx.lineTo(this.x + this.w, this.y + this.mullionYPos);
+                ctx.stroke();
+            }
+
+            ctx.globalAlpha = 1.0;
+        }
+    }
+
+    function init() {
+        frames = [];
+        profiles = [];
+        for (let i = 0; i < 15; i++) {
+            frames.push(new WindowFrame());
+        }
+        for (let i = 0; i < 10; i++) {
+            profiles.push(new ProfileLine());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        profiles.forEach(profile => {
+            profile.update();
+            profile.draw();
+        });
+        frames.forEach(frame => {
+            frame.update();
+            frame.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+});
