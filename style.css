@@ -248,6 +248,7 @@ img {
     align-items: center;
     max-width: 100%;
     padding-right: 120px;
+    gap: 20px;
 }
 
 .logo-img {
@@ -299,6 +300,9 @@ img {
     font-size: 2rem;
     color: var(--color-light);
     cursor: pointer;
+    margin-left: auto;
+    order: 2;
+    flex-shrink: 0;
 }
 
 /* ==========================================
@@ -912,13 +916,49 @@ img {
     }
 }
 
+@media (max-width: 992px) {
+    .navbar {
+        width: 100%;
+        padding: 12px 0;
+    }
+
+    .nav-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 16px !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        position: relative !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobile-menu-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        position: static !important;
+        transform: none !important;
+        font-size: 2.2rem !important;
+        background: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
+        padding: 4px !important;
+        cursor: pointer !important;
+        z-index: 1100 !important;
+    }
+}
+
 @media (max-width: 768px) {
     .nav-links {
         position: fixed;
-        top: 80px;
+        top: 60px;
         left: -100%;
         width: 100%;
-        height: calc(100vh - 80px);
+        height: calc(100vh - 60px);
         background: rgba(10, 10, 10, 0.98);
         flex-direction: column;
         justify-content: center;
@@ -928,10 +968,6 @@ img {
 
     .nav-links.active {
         left: 0;
-    }
-
-    .mobile-menu-btn {
-        display: block;
     }
 
     .hero-overlay {
@@ -1287,11 +1323,121 @@ img {
 .hero-logo-above {
     display: flex;
     justify-content: center;
-    margin-bottom: 16px;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    padding: 10px 0;
 }
 
 .hero-logo-img {
     width: 220px;
+    max-width: 80vw;
     height: auto;
-    filter: drop-shadow(0 4px 16px rgba(0, 122, 204, 0.35));
+    filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4));
+    -webkit-filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4));
+}
+
+/* ==========================================
+   Logo Reveal & Diamond Glow Animation
+========================================== */
+.logo-reveal {
+    -webkit-animation: logoEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards, diamondGlowPulse 4s ease-in-out 1.5s infinite alternate;
+    animation: logoEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards, diamondGlowPulse 4s ease-in-out 1.5s infinite alternate;
+    will-change: transform, opacity, filter;
+    position: relative;
+    z-index: 1;
+}
+
+@-webkit-keyframes logoEntrance {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-25px) scale(0.85);
+        -webkit-filter: drop-shadow(0 0 0px rgba(0, 122, 204, 0)) brightness(0.4);
+    }
+    50% {
+        opacity: 1;
+        -webkit-transform: translateY(4px) scale(1.05);
+        -webkit-filter: drop-shadow(0 0 35px rgba(0, 180, 255, 0.9)) brightness(1.3);
+    }
+    75% {
+        -webkit-transform: translateY(-2px) scale(0.98);
+        -webkit-filter: drop-shadow(0 4px 22px rgba(0, 122, 204, 0.7)) brightness(1.1);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0) scale(1);
+        -webkit-filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4)) brightness(1);
+    }
+}
+
+@keyframes logoEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(-25px) scale(0.85);
+        filter: drop-shadow(0 0 0px rgba(0, 122, 204, 0)) brightness(0.4);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(4px) scale(1.05);
+        filter: drop-shadow(0 0 35px rgba(0, 180, 255, 0.9)) brightness(1.3);
+    }
+    75% {
+        transform: translateY(-2px) scale(0.98);
+        filter: drop-shadow(0 4px 22px rgba(0, 122, 204, 0.7)) brightness(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4)) brightness(1);
+    }
+}
+
+/* Pulso suave de brilho diamante contínuo */
+@-webkit-keyframes diamondGlowPulse {
+    0% {
+        -webkit-filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4));
+    }
+    100% {
+        -webkit-filter: drop-shadow(0 6px 28px rgba(51, 153, 255, 0.75));
+    }
+}
+
+@keyframes diamondGlowPulse {
+    0% {
+        filter: drop-shadow(0 4px 18px rgba(0, 122, 204, 0.4));
+    }
+    100% {
+        filter: drop-shadow(0 6px 28px rgba(51, 153, 255, 0.75));
+    }
+}
+
+/* Shimmer refletido deslizando pela logo */
+.hero-logo-above::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -130%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        transparent 100%
+    );
+    -webkit-animation: logoShimmer 1.1s ease 1.2s 1 forwards;
+    animation: logoShimmer 1.1s ease 1.2s 1 forwards;
+    pointer-events: none;
+    z-index: 2;
+}
+
+@-webkit-keyframes logoShimmer {
+    0%   { left: -130%; }
+    100% { left: 160%;  }
+}
+
+@keyframes logoShimmer {
+    0%   { left: -130%; }
+    100% { left: 160%;  }
 }
