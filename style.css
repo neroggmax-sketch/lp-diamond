@@ -244,8 +244,10 @@ img {
 
 .nav-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
+    max-width: 100%;
+    padding-right: 120px;
 }
 
 .logo-img {
@@ -1277,4 +1279,19 @@ img {
     fill: var(--color-primary-light);
     font-size: 12px;
     font-family: 'Courier New', monospace;
+}
+
+/* ==========================================
+   Hero Logo acima do card
+========================================== */
+.hero-logo-above {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.hero-logo-img {
+    width: 220px;
+    height: auto;
+    filter: drop-shadow(0 4px 16px rgba(0, 122, 204, 0.35));
 }
