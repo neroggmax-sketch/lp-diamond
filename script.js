@@ -51,22 +51,28 @@ const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
 const navLinks = document.querySelector('.nav-links');
 const mobileMenuIcon = document.querySelector('.mobile-menu-btn i');
 
-mobileMenuBtn.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileMenuBtn.classList.toggle('open');
 
-    if (navLinks.classList.contains('active')) {
-        mobileMenuIcon.classList.replace('ph-list', 'ph-x');
-    } else {
-        mobileMenuIcon.classList.replace('ph-x', 'ph-list');
-    }
-});
+        if (mobileMenuIcon) {
+            if (navLinks.classList.contains('active')) {
+                mobileMenuIcon.classList.replace('ph-list', 'ph-x');
+            } else {
+                mobileMenuIcon.classList.replace('ph-x', 'ph-list');
+            }
+        }
+    });
+}
 
 const navItems = document.querySelectorAll('.nav-links a');
 navItems.forEach(item => {
     item.addEventListener('click', () => {
         if (navLinks.classList.contains('active')) {
             navLinks.classList.remove('active');
-            mobileMenuIcon.classList.replace('ph-x', 'ph-list');
+            if (mobileMenuBtn) mobileMenuBtn.classList.remove('open');
+            if (mobileMenuIcon) mobileMenuIcon.classList.replace('ph-x', 'ph-list');
         }
     });
 });
